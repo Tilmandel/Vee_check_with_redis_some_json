@@ -7,7 +7,6 @@ thread_id = '1455530191166678'
 thread_type = ThreadType.GROUP
 var_alarm_vee = 0.006
 var_alarm_btc = 8300
-var_counter = 0
 var_date_of_day = []
 var_arch_VEE_price = []
 var_arch_BTC_price = []
@@ -100,9 +99,11 @@ def _info_to_msg():
     time_now = time.strftime("%H:%M:%S")
     time_H_M = time.strftime("%H:%M")
     try:
-        if float(var_result_list['VEE']) >= var_alarm_vee or var_result_list['BTC'] >= var_alarm_btc and var_counter == 0:
+        if float(var_result_list['VEE']) >= var_alarm_vee:
             _info_to_msg()
             var_alarm_vee += 0.006
+        if var_result_list['BTC'] >= var_alarm_btc:
+            _info_to_msg()
             var_alarm_btc += 600
         if time_H_M == '12:00' or time_H_M == '18:00' or time_H_M == '23:40':
             var_current_price_vee.append(var_result_list['VEE'])
