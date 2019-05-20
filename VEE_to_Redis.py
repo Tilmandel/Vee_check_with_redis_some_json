@@ -15,11 +15,6 @@ var_arch_BTC_price = []
 var_DB_data = {}
 var_url_data = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
 var_result_list = {}
-_take_data_from_server(var_url_data)
-var_result_list['VEE'] = _vee_checker()
-var_result_list['BTC'] = _btc()
-var_result_list['BTC1'] = _btc()
-var_result_list['VEE1'] = _vee_checker()
 #=======================================================
 def _write_to_server(var_url_data,date,obj):
     avg_price =sum(obj)/len(obj)
@@ -87,8 +82,8 @@ def _first_loop():
         time.sleep(3)
         os.system('cls')
     finally:
-            _write_to_server(var_url_data,day_date,var_current_price_vee))
-            _write_to_server(var_url_data, day_date, var_current_price_btc))
+        _write_to_server(var_url_data,day_date,var_current_price_vee)
+        _write_to_server(var_url_data, day_date, var_current_price_btc)
         client.logout()
         exit()
 def _info_to_msg():
@@ -96,6 +91,11 @@ def _info_to_msg():
     client.send(Message(text='{} USD'.format(var_result_list['BTC'])), thread_id=thread_id, thread_type=thread_type)
     client.logout()
 #=======================================================
+_take_data_from_server(var_url_data)
+var_result_list['VEE'] = _vee_checker()
+var_result_list['BTC'] = _btc()
+var_result_list['BTC1'] = _btc()
+var_result_list['VEE1'] = _vee_checker()
 while True:
     day_date = time.strftime("%d.%m.%Y")
     time_now = time.strftime("%H:%M:%S")
@@ -111,13 +111,13 @@ while True:
             var_current_price_vee.append(var_result_list['VEE'])
             var_current_price_btc.append(var_result_list['BTC'])
         if time_H_M == '23:55':
-            _write_to_server(var_url_data,day_date,var_current_price_vee))
-            _write_to_server(var_url_data, day_date, var_current_price_btc))
+            _write_to_server(var_url_data,day_date,var_current_price_vee)
+            _write_to_server(var_url_data, day_date, var_current_price_btc)
         else:
             _first_loop()
     finally:
-        _write_to_server(var_url_data,day_date,var_current_price_vee))
-        _write_to_server(var_url_data, day_date, var_current_price_btc))
+        _write_to_server(var_url_data,day_date,var_current_price_vee)
+        _write_to_server(var_url_data, day_date, var_current_price_btc)
         client.logout()
         exit()
 
