@@ -118,6 +118,9 @@ while True:
         if time_H_M == '23:55':
             temp_list = [{'BTC':sum(var_current_price_btc)},{'VEE':sum(var_current_price_vee)}]
             _write_to_server(var_url_data,day_date,temp_list)
+            _take_data_from_server(var_url_data)
+            var_DB_data_sorted = sorted(var_DB_data)
+            _data_to_lists()
 
         else:
             _first_loop()
