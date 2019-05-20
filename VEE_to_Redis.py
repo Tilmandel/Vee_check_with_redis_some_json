@@ -1,6 +1,7 @@
 import requests,os,time,redis
 from fbchat import Client
 from fbchat.models import *
+#=======================================================
 client = Client('jaroszek15@poczta.fm', 'spajder21!')
 thread_id = '1455530191166678'
 thread_type = ThreadType.GROUP
@@ -12,6 +13,13 @@ var_arch_VEE_price = []
 var_arch_BTC_price = []
 var_DB_data = {}
 var_url_data = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
+var_result_list = {}
+_take_data_from_server(var_url_data)
+var_result_list['VEE'] = _vee_checker()
+var_result_list['BTC'] = _btc()
+var_result_list['BTC1'] = _btc()
+var_result_list['VEE1'] = _vee_checker()
+#=======================================================
 def _write_to_server(var_url_data,date,obj):
     avg_price =sum(obj)/len(obj)
     var_url_data.hmset(date,avg_price)
@@ -86,13 +94,8 @@ def _info_to_msg():
     client.send(Message(text='{} USD'.format(var_result_list['VEE'])), thread_id=thread_id, thread_type=thread_type)
     client.send(Message(text='{} USD'.format(var_result_list['BTC'])), thread_id=thread_id, thread_type=thread_type)
     client.logout()
-var_result_list = {}
-_take_data_from_server(var_url_data)
-var_result_list['VEE'] = _vee_checker()
-var_result_list['BTC'] = _btc()
-var_result_list['BTC1'] = _btc()
-var_result_list['VEE1'] = _vee_checker()
-while True:
+#=======================================================
+    while True:
     day_date = time.strftime("%d.%m.%Y")
     time_now = time.strftime("%H:%M:%S")
     time_H_M = time.strftime("%H:%M")
