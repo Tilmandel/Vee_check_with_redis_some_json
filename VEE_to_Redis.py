@@ -8,6 +8,8 @@ thread_type = ThreadType.GROUP
 var_alarm_vee = 0.006
 var_alarm_btc = 8300
 var_date_of_day = []
+var_current_price_vee = []
+var_current_price_btc = []
 var_arch_VEE_price = []
 var_arch_BTC_price = []
 var_DB_data = {}
@@ -85,8 +87,8 @@ def _first_loop():
         time.sleep(3)
         os.system('cls')
     finally:
-        _write_to_server(var_url_data,day_date,float(var_result_list['VEE']))
-        _write_to_server(var_url_data, day_date, int(var_result_list['BTC']))
+            _write_to_server(var_url_data,day_date,var_current_price_vee))
+            _write_to_server(var_url_data, day_date, var_current_price_btc))
         client.logout()
         exit()
 def _info_to_msg():
@@ -109,13 +111,13 @@ def _info_to_msg():
             var_current_price_vee.append(var_result_list['VEE'])
             var_current_price_btc.append(var_result_list['BTC'])
         if time_H_M == '23:55':
-            _write_to_server(var_url_data,day_date,float(var_result_list['VEE']))
-            _write_to_server(var_url_data, day_date, int(var_result_list['BTC']))
+            _write_to_server(var_url_data,day_date,var_current_price_vee))
+            _write_to_server(var_url_data, day_date, var_current_price_btc))
         else:
             _first_loop()
     finally:
-        _write_to_server(var_url_data,day_date,float(var_result_list['VEE']))
-        _write_to_server(var_url_data, day_date, int(var_result_list['BTC']))
+        _write_to_server(var_url_data,day_date,var_current_price_vee))
+        _write_to_server(var_url_data, day_date, var_current_price_btc))
         client.logout()
         exit()
 
