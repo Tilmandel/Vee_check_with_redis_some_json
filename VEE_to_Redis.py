@@ -96,7 +96,7 @@ def _info_to_msg():
     client.send(Message(text='{} USD'.format(var_result_list['BTC'])), thread_id=thread_id, thread_type=thread_type)
     client.logout()
 #=======================================================
-    while True:
+while True:
     day_date = time.strftime("%d.%m.%Y")
     time_now = time.strftime("%H:%M:%S")
     time_H_M = time.strftime("%H:%M")
