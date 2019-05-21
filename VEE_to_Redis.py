@@ -23,7 +23,7 @@ def _write_to_server(var_url_data,date,obj):
         obj_dict = {'BTC':price_btc,'VEE':price_vee}
         var_url_data.hmset(date, obj_dict)
     except ZeroDivisionError:
-        obj_dict = {'BTC': 0, 'VEE': 0}
+        obj_dict = {'BTC':int(var_result_list['BTC']) , 'VEE': round(float(var_result_list['VEE']),ndigits=5)}
         var_url_data.hmset(date,obj_dict)
 def _take_data_from_server(var_url_data):
     start_time_day = int(time.strftime('%d'))
@@ -83,14 +83,19 @@ def _first_loop():
         time.sleep(3)
         os.system('cls')
     except KeyboardInterrupt:
-        temp_list = [{'BTC': sum(var_current_price_btc)}, {'VEE': sum(var_current_price_vee)}]
-        _write_to_server(var_url_data, day_date, temp_list)
         exit()
 def _info_to_msg():
-    client = Client('jaroszek15@poczta.fm', 'spajder21!')
+    client = Client('jaroszek15@poczta.fm', 'Spajder2307!')
     client.send(Message(text='{} USD'.format(var_result_list['VEE'])), thread_id=thread_id, thread_type=thread_type)
     client.send(Message(text='{} USD'.format(var_result_list['BTC'])), thread_id=thread_id, thread_type=thread_type)
     client.logout()
+def _clearing_current_session_data():
+    var_date_of_day.clear()
+    var_current_price_vee.clear()
+    var_current_price_btc.clear()
+    var_arch_VEE_price.clear()
+    var_arch_BTC_price.clear()
+    var_DB_data.clear()
 #=======================================================
 _take_data_from_server(var_url_data)
 var_DB_data_sorted = sorted(var_DB_data)
@@ -111,23 +116,25 @@ while True:
         if var_result_list['BTC'] >= var_alarm_btc:
             _info_to_msg()
             var_alarm_btc += 600
-        if time_H_M == '12:00' or time_H_M == '18:00' or time_H_M == '23:40':
-            var_current_price_vee.append(var_result_list['VEE'])
+        if time_H_M == '12:00' or time_H_M == '18:00' or time_H_M == '23:49'and counter == 0:
+            var_current_price_vee.append(round(float(var_result_list['VEE']),ndigits=5))
             var_current_price_btc.append(int(var_result_list['BTC']))
-        if time_H_M == '23:55' and counter == 0:
-            temp_list = [{'BTC':sum(var_current_price_btc)},{'VEE':sum(var_current_price_vee)}]
-            _write_to_server(var_url_data,day_date,temp_list)
+            counter = 1
+        if time_H_M == '23:51' and counter == 0:
+            temp_list = {'BTC':sum(var_current_price_btc), 'VEE': round(float(sum(var_current_price_vee)),ndigits=5)}
+            _write_to_server(var_url_data, day_date, temp_list)
+
+            _clearing_current_session_data()
+
             _take_data_from_server(var_url_data)
             var_DB_data_sorted = sorted(var_DB_data)
             _data_to_lists()
             counter = 1
-        if time_H_M == '23:56':
+        if time_H_M == '12:01'or time_H_M == '18:51' or time_H_M == '18:01' or time_H_M == '23:50' and counter == 1:
             counter = 0
         else:
             _first_loop()
     except KeyboardInterrupt:
-        temp_list = {'BTC': sum(var_current_price_btc),'VEE': sum(var_current_price_vee)}
-        _write_to_server(var_url_data, day_date, temp_list)
         exit()
 
 
