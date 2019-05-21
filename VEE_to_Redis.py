@@ -14,13 +14,12 @@ var_arch_BTC_price = []
 var_DB_data = {}
 var_url_data = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
 var_result_list = {}
+counter = 0
 #=======================================================
 def _write_to_server(var_url_data,date,obj):
-    var_BTC_dict = obj[0]
-    var_VEE_dict = obj[1]
     try:
-        price_btc = var_BTC_dict['BTC']/len(var_current_price_vee)
-        price_vee = var_VEE_dict['VEE']/len(var_current_price_vee)
+        price_btc = obj['BTC']/len(var_current_price_vee)
+        price_vee = obj['VEE']/len(var_current_price_vee)
         obj_dict = {'BTC':price_btc,'VEE':price_vee}
         var_url_data.hmset(date, obj_dict)
     except ZeroDivisionError:
@@ -115,17 +114,19 @@ while True:
         if time_H_M == '12:00' or time_H_M == '18:00' or time_H_M == '23:40':
             var_current_price_vee.append(var_result_list['VEE'])
             var_current_price_btc.append(int(var_result_list['BTC']))
-        if time_H_M == '23:55':
+        if time_H_M == '23:55' and counter = 0:
             temp_list = [{'BTC':sum(var_current_price_btc)},{'VEE':sum(var_current_price_vee)}]
             _write_to_server(var_url_data,day_date,temp_list)
             _take_data_from_server(var_url_data)
             var_DB_data_sorted = sorted(var_DB_data)
             _data_to_lists()
-
+            counter = 1
+        if time_H_M == '23:56'
+            counter = 0
         else:
             _first_loop()
     except KeyboardInterrupt:
-        temp_list = [{'BTC': sum(var_current_price_btc)}, {'VEE': sum(var_current_price_vee)}]
+        temp_list = {'BTC': sum(var_current_price_btc),'VEE': sum(var_current_price_vee)}
         _write_to_server(var_url_data, day_date, temp_list)
         exit()
 
