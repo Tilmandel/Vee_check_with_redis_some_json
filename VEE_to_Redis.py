@@ -114,14 +114,14 @@ while True:
         if time_H_M == '12:00' or time_H_M == '18:00' or time_H_M == '23:40':
             var_current_price_vee.append(var_result_list['VEE'])
             var_current_price_btc.append(int(var_result_list['BTC']))
-        if time_H_M == '23:55' and counter = 0:
+        if time_H_M == '23:55' and counter == 0:
             temp_list = [{'BTC':sum(var_current_price_btc)},{'VEE':sum(var_current_price_vee)}]
             _write_to_server(var_url_data,day_date,temp_list)
             _take_data_from_server(var_url_data)
             var_DB_data_sorted = sorted(var_DB_data)
             _data_to_lists()
             counter = 1
-        if time_H_M == '23:56'
+        if time_H_M == '23:56':
             counter = 0
         else:
             _first_loop()
