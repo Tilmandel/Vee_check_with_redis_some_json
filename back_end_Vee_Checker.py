@@ -1,12 +1,19 @@
-def _write_to_server(var_url_data,date,obj):
+def _info_to_msg(var_result_list):
+    thread_id = '1455530191166678'
+    thread_type = ThreadType.GROUP
+    client = Client('login', 'password')
+    client.send(Message(text='{} USD'.format(var_result_list['VEE'])), thread_id=thread_id, thread_type=thread_type)
+    client.send(Message(text='{} USD'.format(var_result_list['BTC'])), thread_id=thread_id, thread_type=thread_type)
+    client.logout()
+def _write_to_server(server,date,obj,len_vee,len_btc,var_result_list):
     try:
-        price_btc = obj['BTC']/len(var_current_price_vee)
-        price_vee = obj['VEE']/len(var_current_price_vee)
+        price_btc = obj['BTC']/len(len_btc)
+        price_vee = obj['VEE']/len(len_vee)
         obj_dict = {'BTC':price_btc,'VEE':price_vee}
         var_url_data.hmset(date, obj_dict)
     except ZeroDivisionError:
-        obj_dict = {'BTC':int(var_result_list['BTC']) , 'VEE': round(float(var_result_list['VEE']),ndigits=5)}
-        var_url_data.hmset(date,obj_dict)
+        obj_dict = {'BTC':var_result_list['BTC'], 'VEE':var_result_list['VEE'] }
+        server.hmset(date,obj_dict)
         
 def _take_data_from_server(var_url_data):
     var_DB_data = {}
@@ -34,4 +41,4 @@ def _btc():
     url_cryptowatch = 'https://api.cryptowat.ch/markets/coinbase-pro/btcusd/price'
     respond_btc = requests.get(url_cryptowatch)
     data_json = respond_btc.json()
-    return data_json['result']['price']
+    return round(float(data_json['result']['price']),ndigits=2)
