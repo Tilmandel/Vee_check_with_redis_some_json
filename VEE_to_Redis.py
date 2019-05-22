@@ -14,6 +14,12 @@ var_arch_BTC_price = []
 var_DB_data = {}
 var_url_data = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
 var_result_list = {}
+var_clear_data_list = [var_date_of_day,
+                       var_current_price_vee,
+                       var_current_price_btc,
+                       var_arch_VEE_price,
+                       var_arch_BTC_price,
+                       var_DB_data]
 counter = 0
 #=======================================================
 def _write_to_server(var_url_data,date,obj):
@@ -28,14 +34,13 @@ def _write_to_server(var_url_data,date,obj):
 def _take_data_from_server(var_url_data):
     start_time_day = int(time.strftime('%d'))
     for i in range(start_time_day-3,start_time_day):
-        k = str(i)
-        key = k + time.strftime('.%m.%Y')
+        key = str(i)+ time.strftime('.%m.%Y')
         try:
             arch_data = var_url_data.hgetall(key)
             if arch_data == {}:
                 var_DB_data[key] = {'BTC': 0, 'VEE': 0}
             else:
-                var_DB_data[key] = {'BTC':int(arch_data['BTC']),'VEE':float(arch_data['VEE'])}
+                var_DB_data[k] = {'BTC':int(arch_data['BTC']),'VEE':float(arch_data['VEE'])}
         except Exception:
             continue
 def _data_to_lists():
@@ -71,7 +76,7 @@ def _first_loop():
         VEE: {} USD   $
         BTC : {} USD  {}$""".format(var_result_list['VEE'],
                                     var_result_list['BTC'],
-                                    float("{:.6f}".format(var_result_list['BTC'] - var_result_list['BTC1']))))
+                                    float(round(var_result_list['BTC'] - var_result_list['BTC1']),ndigits=2)))
         print("""
         VEE Wallet : {}$""".format(int((var_result_list['VEE']) * 29965)))
         print()
@@ -90,12 +95,8 @@ def _info_to_msg():
     client.send(Message(text='{} USD'.format(var_result_list['BTC'])), thread_id=thread_id, thread_type=thread_type)
     client.logout()
 def _clearing_current_session_data():
-    var_date_of_day.clear()
-    var_current_price_vee.clear()
-    var_current_price_btc.clear()
-    var_arch_VEE_price.clear()
-    var_arch_BTC_price.clear()
-    var_DB_data.clear()
+    for obj in var_clear_data_list:
+        obj.clear()
 #=======================================================
 _take_data_from_server(var_url_data)
 var_DB_data_sorted = sorted(var_DB_data)
