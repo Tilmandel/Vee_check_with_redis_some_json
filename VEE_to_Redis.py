@@ -1,7 +1,9 @@
 import requests,os,time,redis
 from fbchat import Client
 from fbchat.models import *
+from back_end_Vee_Checker import _take_data_from_server,_write_to_server,_vee_checker,_btc
 #=======================================================
+var_url_data = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
 thread_id = '1455530191166678'
 thread_type = ThreadType.GROUP
 var_alarm_vee = 0.006
@@ -11,38 +13,14 @@ var_current_price_vee = []
 var_current_price_btc = []
 var_arch_VEE_price = []
 var_arch_BTC_price = []
-var_DB_data = {}
-var_url_data = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
 var_result_list = {}
 var_clear_data_list = [var_date_of_day,
                        var_current_price_vee,
                        var_current_price_btc,
                        var_arch_VEE_price,
-                       var_arch_BTC_price,
-                       var_DB_data]
+                       var_arch_BTC_price]
 counter = 0
 #=======================================================
-def _write_to_server(var_url_data,date,obj):
-    try:
-        price_btc = obj['BTC']/len(var_current_price_vee)
-        price_vee = obj['VEE']/len(var_current_price_vee)
-        obj_dict = {'BTC':price_btc,'VEE':price_vee}
-        var_url_data.hmset(date, obj_dict)
-    except ZeroDivisionError:
-        obj_dict = {'BTC':int(var_result_list['BTC']) , 'VEE': round(float(var_result_list['VEE']),ndigits=5)}
-        var_url_data.hmset(date,obj_dict)
-def _take_data_from_server(var_url_data):
-    start_time_day = int(time.strftime('%d'))
-    for i in range(start_time_day-3,start_time_day):
-        key = str(i)+ time.strftime('.%m.%Y')
-        try:
-            arch_data = var_url_data.hgetall(key)
-            if arch_data == {}:
-                var_DB_data[key] = {'BTC': 0, 'VEE': 0}
-            else:
-                var_DB_data[k] = {'BTC':int(arch_data['BTC']),'VEE':float(arch_data['VEE'])}
-        except Exception:
-            continue
 def _data_to_lists():
     for i in var_DB_data_sorted:
         var_date_of_day.append("{:>5s}".format(i))
@@ -55,19 +33,6 @@ def _replace(string):
     delete = delete.replace('[', "")
     delete = delete.replace(']', "")
     return delete
-def _vee_checker():
-    url = 'https://coinmarketcap.com/currencies/blockv/?fbclid=IwAR3itiEQqX-6bZeyEkB4Y4pocgVlxbtaRWiFtlrp8WfKWuuZ9SzcunXxg7s#charts'
-    respond = requests.get(url)
-    a = respond.text
-    tekst_1 = 'data-currency-value'
-    index = a.index(tekst_1)
-    vee_price = [a[index+20:index+28]]
-    return float(vee_price[0])
-def _btc():
-    url_cryptowatch = 'https://api.cryptowat.ch/markets/coinbase-pro/btcusd/price'
-    respond_btc = requests.get(url_cryptowatch)
-    data_json = respond_btc.json()
-    return data_json['result']['price']
 def _first_loop():
     time_now = time.strftime("%H:%M:%S")
     print(time_now)
@@ -98,8 +63,7 @@ def _clearing_current_session_data():
     for obj in var_clear_data_list:
         obj.clear()
 #=======================================================
-_take_data_from_server(var_url_data)
-var_DB_data_sorted = sorted(var_DB_data)
+var_DB_data,var_DB_data_sorted = _take_data_from_server(var_url_data)
 _data_to_lists()
 var_result_list['VEE'] = _vee_checker()
 var_result_list['VEE1'] = _vee_checker()
@@ -124,9 +88,7 @@ while True:
         if time_H_M == '23:51' and counter == 0:
             temp_list = {'BTC':sum(var_current_price_btc), 'VEE': round(float(sum(var_current_price_vee)),ndigits=5)}
             _write_to_server(var_url_data, day_date, temp_list)
-
             _clearing_current_session_data()
-
             _take_data_from_server(var_url_data)
             var_DB_data_sorted = sorted(var_DB_data)
             _data_to_lists()
