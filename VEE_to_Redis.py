@@ -28,8 +28,8 @@ var_result_list['BTC1'] = round(var_arch_BTC_price[-1])
 def _data_to_lists():
     for i in var_DB_data_sorted:
         var_date_of_day.append("{:>5s}".format(i))
-        var_arch_BTC_price.append("{:>10d}".format(var_DB_data[i]['BTC']))
-        var_arch_VEE_price.append("{:>10s}".format(str(var_DB_data[i]['VEE'])))
+        var_arch_BTC_price.append("{:>10f}".format(var_DB_data[i]['BTC']))
+        var_arch_VEE_price.append("{:>10f}".format(var_DB_data[i]['VEE']))
 def _replace(string):
     delete = str(string)
     delete = delete.replace(",", " ")
