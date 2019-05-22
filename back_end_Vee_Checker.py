@@ -1,6 +1,8 @@
+from fbchat import Client
+from fbchat.models import *
+import time,requests,redis
+server = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
 def _info_to_msg(var_result_list):
-    from fbchat import Client
-    from fbchat.models import *
     thread_id = '1455530191166678'
     thread_type = ThreadType.GROUP
     client = Client('login', 'password')
@@ -13,8 +15,8 @@ def _data_to_lists(var_DB_data_sorted,var_DB_data):
     var_arch_BTC_price = []
     for i in var_DB_data_sorted:
         var_date_of_day.append("{:>5s}".format(i))
-        var_arch_BTC_price.append("{:>10f}".format(var_DB_data[i]['BTC']))
-        var_arch_VEE_price.append("{:>10f}".format(var_DB_data[i]['VEE']))
+        var_arch_BTC_price.append("{:>10s}".format(var_DB_data[i]['BTC']))
+        var_arch_VEE_price.append("{:>10s}".format(var_DB_data[i]['VEE']))
     return var_date_of_day,var_arch_VEE_price,var_arch_BTC_price
 
 def _write_to_server(server,date,obj,len_vee,len_btc,var_result_list):
@@ -26,7 +28,6 @@ def _write_to_server(server,date,obj,len_vee,len_btc,var_result_list):
     except ZeroDivisionError:
         obj_dict = {'BTC':var_result_list['BTC'], 'VEE':var_result_list['VEE'] }
         server.hmset(date,obj_dict)
-        
 def _take_data_from_server(var_url_data):
     var_DB_data = {}
     start_time_day = int(time.strftime('%d'))
@@ -37,7 +38,7 @@ def _take_data_from_server(var_url_data):
             if arch_data == {}:
                 var_DB_data[key] = {'BTC': 0, 'VEE': 0}
             else:
-                var_DB_data[k] = {'BTC':arch_data['BTC'],'VEE':arch_data['VEE']}
+                var_DB_data[key] = {'BTC':arch_data['BTC'],'VEE':arch_data['VEE']}
         except Exception:
             continue
     return var_DB_data ,sorted(var_DB_data)

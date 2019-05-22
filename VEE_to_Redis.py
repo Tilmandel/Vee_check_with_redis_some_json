@@ -1,4 +1,4 @@
-import requests,os,time,redis
+import time,redis,os
 from back_end_Vee_Checker import _take_data_from_server,_write_to_server,_vee_checker,_btc,_info_to_msg,_data_to_lists
 #=======================================================
 server = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
@@ -32,7 +32,7 @@ def _first_loop():
         VEE: {} USD   $
         BTC : {} USD  {}$""".format(var_result_list['VEE'],
                                     var_result_list['BTC'],
-                                    var_result_list['BTC'] - var_result_list['BTC1'])
+                                    round(var_result_list['BTC'] - float(var_result_list['BTC1']),ndigits=2)))
         print("""
         VEE Wallet : {}$""".format(int((var_result_list['VEE']) * 29965)))
         print()
