@@ -3,9 +3,7 @@ from fbchat import Client
 from fbchat.models import *
 from back_end_Vee_Checker import _take_data_from_server,_write_to_server,_vee_checker,_btc
 #=======================================================
-var_url_data = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
-thread_id = '1455530191166678'
-thread_type = ThreadType.GROUP
+server = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
 var_alarm_vee = 0.006
 var_alarm_btc = 8300
 var_date_of_day = []
@@ -20,6 +18,12 @@ var_clear_data_list = [var_date_of_day,
                        var_arch_VEE_price,
                        var_arch_BTC_price]
 counter = 0
+var_DB_data,var_DB_data_sorted = _take_data_from_server(server)
+_data_to_lists()
+var_result_list['VEE'] = _vee_checker()
+var_result_list['VEE1'] = _vee_checker()
+var_result_list['BTC'] = _btc()
+var_result_list['BTC1'] = round(var_arch_BTC_price[-1])
 #=======================================================
 def _data_to_lists():
     for i in var_DB_data_sorted:
@@ -41,7 +45,7 @@ def _first_loop():
         VEE: {} USD   $
         BTC : {} USD  {}$""".format(var_result_list['VEE'],
                                     var_result_list['BTC'],
-                                    float(round(var_result_list['BTC'] - var_result_list['BTC1']),ndigits=2)))
+                                    var_result_list['BTC'] - var_result_list['BTC1'])
         print("""
         VEE Wallet : {}$""".format(int((var_result_list['VEE']) * 29965)))
         print()
@@ -54,43 +58,31 @@ def _first_loop():
         os.system('cls')
     except KeyboardInterrupt:
         exit()
-def _info_to_msg():
-    client = Client('jaroszek15@poczta.fm', 'Spajder2307!')
-    client.send(Message(text='{} USD'.format(var_result_list['VEE'])), thread_id=thread_id, thread_type=thread_type)
-    client.send(Message(text='{} USD'.format(var_result_list['BTC'])), thread_id=thread_id, thread_type=thread_type)
-    client.logout()
 def _clearing_current_session_data():
     for obj in var_clear_data_list:
         obj.clear()
 #=======================================================
-var_DB_data,var_DB_data_sorted = _take_data_from_server(var_url_data)
-_data_to_lists()
-var_result_list['VEE'] = _vee_checker()
-var_result_list['VEE1'] = _vee_checker()
-var_result_list['BTC'] = _btc()
-var_result_list['BTC1'] = int(var_arch_BTC_price[-1])
-
 while True:
     day_date = time.strftime("%d.%m.%Y")
     time_now = time.strftime("%H:%M:%S")
     time_H_M = time.strftime("%H:%M")
     try:
-        if float(var_result_list['VEE']) >= var_alarm_vee:
-            _info_to_msg()
+        if var_result_list['VEE'] >= var_alarm_vee:
+            _info_to_msg(var_result_list)
             var_alarm_vee += 0.006
         if var_result_list['BTC'] >= var_alarm_btc:
-            _info_to_msg()
+            _info_to_msg(var_result_list)
             var_alarm_btc += 600
         if time_H_M == '12:00' or time_H_M == '18:00' or time_H_M == '23:49'and counter == 0:
-            var_current_price_vee.append(round(float(var_result_list['VEE']),ndigits=5))
+            var_current_price_vee.append(var_result_list['VEE'])
             var_current_price_btc.append(int(var_result_list['BTC']))
             counter = 1
         if time_H_M == '23:51' and counter == 0:
-            temp_list = {'BTC':sum(var_current_price_btc), 'VEE': round(float(sum(var_current_price_vee)),ndigits=5)}
-            _write_to_server(var_url_data, day_date, temp_list)
+            temp_list = {'BTC':sum(var_current_price_btc), 'VEE': sum(var_current_price_vee)}
+            _write_to_server(server, day_date, temp_list,len(var_current_price_vee),len(var_current_price_btc))
             _clearing_current_session_data()
-            _take_data_from_server(var_url_data)
-            var_DB_data_sorted = sorted(var_DB_data)
+            _take_data_from_server(server)
+            var_DB_data,var_DB_data_sorted = _take_data_from_server(server)
             _data_to_lists()
             counter = 1
         if time_H_M == '12:01'or time_H_M == '18:51' or time_H_M == '18:01' or time_H_M == '23:50' and counter == 1:
