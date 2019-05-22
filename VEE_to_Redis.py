@@ -15,7 +15,7 @@ var_date_of_day,var_arch_VEE_price,var_arch_BTC_price =_data_to_lists(var_DB_dat
 var_result_list['VEE'] = _vee_checker()
 var_result_list['VEE1'] = _vee_checker()
 var_result_list['BTC'] = _btc()
-var_result_list['BTC1'] = round(var_arch_BTC_price[-1])
+var_result_list['BTC1'] = var_arch_BTC_price[-1]
 #=======================================================
 def _replace(string):
     delete = str(string)
