@@ -66,7 +66,7 @@ while True:
             counter = 1
         if time_H_M == '23:51' and counter == 0:
             temp_list = {'BTC':sum(var_current_price_btc), 'VEE': sum(var_current_price_vee)}
-            _write_to_server(server, day_date, temp_list,len(var_current_price_vee),len(var_current_price_btc))
+            _write_to_server(server, day_date, temp_list,len(var_current_price_vee),len(var_current_price_btc),var_result_list)
             _clearing_current_session_data()
             _take_data_from_server(server)
             var_DB_data,var_DB_data_sorted = _take_data_from_server(server)
