@@ -1,4 +1,6 @@
 def _info_to_msg(var_result_list):
+    from fbchat import Client
+    from fbchat.models import *
     thread_id = '1455530191166678'
     thread_type = ThreadType.GROUP
     client = Client('login', 'password')
