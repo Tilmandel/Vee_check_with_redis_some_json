@@ -5,6 +5,16 @@ def _info_to_msg(var_result_list):
     client.send(Message(text='{} USD'.format(var_result_list['VEE'])), thread_id=thread_id, thread_type=thread_type)
     client.send(Message(text='{} USD'.format(var_result_list['BTC'])), thread_id=thread_id, thread_type=thread_type)
     client.logout()
+def _data_to_lists(var_DB_data_sorted,var_DB_data):
+    var_date_of_day = []
+    var_arch_VEE_price = []
+    var_arch_BTC_price = []
+    for i in var_DB_data_sorted:
+        var_date_of_day.append("{:>5s}".format(i))
+        var_arch_BTC_price.append("{:>10f}".format(var_DB_data[i]['BTC']))
+        var_arch_VEE_price.append("{:>10f}".format(var_DB_data[i]['VEE']))
+    return var_date_of_day,var_arch_VEE_price,var_arch_BTC_price
+
 def _write_to_server(server,date,obj,len_vee,len_btc,var_result_list):
     try:
         price_btc = obj['BTC']/len(len_btc)
