@@ -25,7 +25,7 @@ def _take_data_from_server(var_url_data):
             if arch_data == {}:
                 var_DB_data[key] = {'BTC': 0, 'VEE': 0}
             else:
-                var_DB_data[k] = {'BTC':int(arch_data['BTC']),'VEE':float(arch_data['VEE'])}
+                var_DB_data[k] = {'BTC':arch_data['BTC'],'VEE':arch_data['VEE']}
         except Exception:
             continue
     return var_DB_data ,sorted(var_DB_data)
