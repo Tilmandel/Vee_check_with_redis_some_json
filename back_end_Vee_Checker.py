@@ -21,12 +21,12 @@ def _data_to_lists(var_DB_data_sorted,var_DB_data):
 
 def _write_to_server(server,date,obj,len_vee,len_btc,var_result_list):
     try:
-        price_btc = obj['BTC']/len(len_btc)
-        price_vee = obj['VEE']/len(len_vee)
-        obj_dict = {'BTC':price_btc,'VEE':price_vee}
-        var_url_data.hmset(date, obj_dict)
+        price_btc = obj['BTC']/len_btc
+        price_vee = obj['VEE']/len_vee
+        obj_dict = {'BTC':round(float(price_btc),ndigits=2),'VEE':round(float(price_vee),ndigits=5)}
+        server.hmset(date, obj_dict)
     except ZeroDivisionError:
-        obj_dict = {'BTC':var_result_list['BTC'], 'VEE':var_result_list['VEE'] }
+        obj_dict = {'BTC':var_result_list['BTC'],'VEE':var_result_list['VEE']}
         server.hmset(date,obj_dict)
 def _take_data_from_server(var_url_data):
     var_DB_data = {}

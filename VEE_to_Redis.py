@@ -34,7 +34,7 @@ def _first_loop():
                                     var_result_list['BTC'],
                                     round(var_result_list['BTC'] - float(var_result_list['BTC1']),ndigits=2)))
         print("""
-        VEE Wallet : {}$""".format(int((var_result_list['VEE']) * 29965)))
+        VEE Wallet : {}$""".format(int(var_result_list['VEE'] * 29965)))
         print()
         print("Date:    ",_replace(var_date_of_day))
         print("BTC(USD):",_replace(var_arch_BTC_price))
@@ -60,11 +60,11 @@ while True:
         if var_result_list['BTC'] >= var_alarm_btc:
             _info_to_msg(var_result_list)
             var_alarm_btc += 600
-        if time_H_M == '12:00' or time_H_M == '18:00' or time_H_M == '23:49'and counter == 0:
-            var_current_price_vee.append(var_result_list['VEE'])
-            var_current_price_btc.append(int(var_result_list['BTC']))
+        if time_H_M == '12:00' or time_H_M == '18:25' or time_H_M == '20:25' or time_H_M == '23:49'and counter == 0:
+            var_current_price_vee.append(float(var_result_list['VEE']))
+            var_current_price_btc.append(float(var_result_list['BTC']))
             counter = 1
-        if time_H_M == '23:51' and counter == 0:
+        if time_H_M == '23:59' and counter == 0:
             temp_list = {'BTC':sum(var_current_price_btc), 'VEE': sum(var_current_price_vee)}
             _write_to_server(server, day_date, temp_list,len(var_current_price_vee),len(var_current_price_btc),var_result_list)
             _clearing_current_session_data()
@@ -72,8 +72,9 @@ while True:
             var_DB_data,var_DB_data_sorted = _take_data_from_server(server)
             var_date_of_day,var_arch_VEE_price,var_arch_BTC_price =_data_to_lists(var_DB_data_sorted,var_DB_data)
             counter = 1
-        if time_H_M == '12:01'or time_H_M == '18:51' or time_H_M == '18:01' or time_H_M == '23:50' and counter == 1:
+        if time_H_M == '12:01'or time_H_M == '18:26' or time_H_M == '20:26' or time_H_M == '23:50' and counter == 1:
             counter = 0
+            _first_loop()
         else:
             _first_loop()
     except KeyboardInterrupt:
