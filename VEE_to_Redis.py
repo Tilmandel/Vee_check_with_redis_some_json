@@ -60,7 +60,7 @@ while True:
         if var_result_list['BTC'] >= var_alarm_btc:
             _info_to_msg(var_result_list)
             var_alarm_btc += 600
-        if time_H_M == '12:00' or time_H_M == '18:25' or time_H_M == '20:25' or time_H_M == '23:49'and counter == 0:
+        if time_H_M in ('12:00','18:25','20:25','23:49')and counter == 0:
             var_current_price_vee.append(float(var_result_list['VEE']))
             var_current_price_btc.append(float(var_result_list['BTC']))
             counter = 1
@@ -72,7 +72,7 @@ while True:
             var_DB_data,var_DB_data_sorted = _take_data_from_server(server)
             var_date_of_day,var_arch_VEE_price,var_arch_BTC_price =_data_to_lists(var_DB_data_sorted,var_DB_data)
             counter = 1
-        if time_H_M == '12:01'or time_H_M == '18:26' or time_H_M == '20:26' or time_H_M == '23:50' and counter == 1:
+        if time_H_M in ('12:01','18:26','20:26','23:50') and counter == 1:
             counter = 0
             _first_loop()
         else:
