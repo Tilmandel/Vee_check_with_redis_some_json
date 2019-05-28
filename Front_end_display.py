@@ -1,9 +1,7 @@
 import time,redis,os
 from back_end_Vee_Checker import _take_data_from_server,_write_to_server,_vee_checker,_btc,_info_to_msg,_data_to_lists
 #=======================================================
-server = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
-var_alarm_vee = 0.006
-var_alarm_btc = 8300
+server = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True,password='password', db=0)
 var_current_price_vee = []
 var_current_price_btc = []
 var_result_list = {}
@@ -29,8 +27,8 @@ def _first_loop():
     print(time_now)
     try:
         print("""
-        VEE: {} USD   $
-        BTC : {} USD  {}$""".format(var_result_list['VEE'],
+        VEE: {} USD   {}$
+        BTC : {} USD  {}$""".format(var_result_list['VEE'],round(var_result_list['VEE'] - float(var_result_list['VEE1']),ndigits=5),
                                     var_result_list['BTC'],
                                     round(var_result_list['BTC'] - float(var_result_list['BTC1']),ndigits=2)))
         print("""
@@ -54,27 +52,14 @@ while True:
     time_now = time.strftime("%H:%M:%S")
     time_H_M = time.strftime("%H:%M")
     try:
-        if var_result_list['VEE'] >= var_alarm_vee:
-            _info_to_msg(var_result_list)
-            var_alarm_vee += 0.006
-        if var_result_list['BTC'] >= var_alarm_btc:
-            _info_to_msg(var_result_list)
-            var_alarm_btc += 600
-        if time_H_M in ('12:00','18:25','20:25','23:49')and counter == 0:
-            var_current_price_vee.append(float(var_result_list['VEE']))
-            var_current_price_btc.append(float(var_result_list['BTC']))
-            counter = 1
         if time_H_M == '23:59' and counter == 0:
-            temp_list = {'BTC':sum(var_current_price_btc), 'VEE': sum(var_current_price_vee)}
-            _write_to_server(server, day_date, temp_list,len(var_current_price_vee),len(var_current_price_btc),var_result_list)
             _clearing_current_session_data()
             _take_data_from_server(server)
             var_DB_data,var_DB_data_sorted = _take_data_from_server(server)
             var_date_of_day,var_arch_VEE_price,var_arch_BTC_price =_data_to_lists(var_DB_data_sorted,var_DB_data)
             counter = 1
-        if time_H_M in ('12:01','18:26','20:26','23:50') and counter == 1:
+        if time_H_M in ('00:00') and counter == 1:
             counter = 0
-            _first_loop()
         else:
             _first_loop()
     except KeyboardInterrupt:
