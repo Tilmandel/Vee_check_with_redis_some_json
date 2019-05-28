@@ -1,13 +1,12 @@
 from fbchat import Client
 from fbchat.models import *
 import time,requests,redis
-server = redis.Redis('3.8.101.205', charset="utf-8", decode_responses=True, db=0)
-def _info_to_msg(var_result_list):
+def _info_to_msg(VEE,BTC):
     thread_id = '1455530191166678'
     thread_type = ThreadType.GROUP
     client = Client('login', 'password')
-    client.send(Message(text='{} USD'.format(var_result_list['VEE'])), thread_id=thread_id, thread_type=thread_type)
-    client.send(Message(text='{} USD'.format(var_result_list['BTC'])), thread_id=thread_id, thread_type=thread_type)
+    client.send(Message(text='{} USD'.format(VEE)), thread_id=thread_id, thread_type=thread_type)
+    client.send(Message(text='{} USD'.format(BTC)), thread_id=thread_id, thread_type=thread_type)
     client.logout()
 def _data_to_lists(var_DB_data_sorted,var_DB_data):
     var_date_of_day = []
@@ -15,11 +14,12 @@ def _data_to_lists(var_DB_data_sorted,var_DB_data):
     var_arch_BTC_price = []
     for i in var_DB_data_sorted:
         var_date_of_day.append("{:>5s}".format(i))
-        var_arch_BTC_price.append("{:>10s}".format(var_DB_data[i]['BTC']))
-        var_arch_VEE_price.append("{:>10s}".format(var_DB_data[i]['VEE']))
+        var_arch_BTC_price.append("{:>10s}".format(str(var_DB_data[i]['BTC'])))
+        var_arch_VEE_price.append("{:>10s}".format(str(var_DB_data[i]['VEE'])))
     return var_date_of_day,var_arch_VEE_price,var_arch_BTC_price
 
-def _write_to_server(server,date,obj,len_vee,len_btc,var_result_list):
+def _write_to_server(date,obj,len_vee,len_btc,var_result_list):
+    server = redis.Redis('localhost', charset="utf-8", decode_responses=True,password='password', db=0)
     try:
         price_btc = obj['BTC']/len_btc
         price_vee = obj['VEE']/len_vee
@@ -28,7 +28,7 @@ def _write_to_server(server,date,obj,len_vee,len_btc,var_result_list):
     except ZeroDivisionError:
         obj_dict = {'BTC':var_result_list['BTC'],'VEE':var_result_list['VEE']}
         server.hmset(date,obj_dict)
-def _take_data_from_server(var_url_data):
+def _take_data_from_server(server):
     var_DB_data = {}
     start_time_day = int(time.strftime('%d'))
     for i in range(start_time_day-3,start_time_day):
