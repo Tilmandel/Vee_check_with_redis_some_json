@@ -62,13 +62,14 @@ while True:
         var_current_price_vee.append(float(var_result_list['VEE']))
         var_current_price_vee.append(float(var_result_list['BTC']))
         counter = 1
-    if time_H_M == '01:24' and counter == 0:
+    if time_H_M == '23:59' and counter == 0:
         var_alarm_vee.remove(0)
         var_alarm_btc.remove(0)
         temp_list = {'BTC':sum(var_current_price_btc),'VEE':sum(var_current_price_vee)}
         _write_to_server(day_date,temp_list,len(var_current_price_vee),len(var_current_price_btc),var_result_list)
         _clearing_current_session_data()
-    if time_H_M in ('01:03','01:25', '07:02', '09:26', '10:46', '12:02', '18:26', '20:26', '23:50'):
+        counter = 1
+    if time_H_M in ('00:00','01:03','01:25', '07:02', '09:26', '10:46', '12:02', '18:26', '20:26', '23:50'):
         counter = 0
 
 
