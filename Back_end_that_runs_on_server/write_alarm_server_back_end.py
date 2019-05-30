@@ -45,6 +45,11 @@ def _write_to_server(date,obj,len_vee,len_btc,var_result_list):
 def _clearing_current_session_data():
     for obj in var_clear_data_list:
         obj.clear()
+def _clear_0_digit(obj):
+    for i in range(obj.count(0)):
+        obj.remove(0)
+    return obj
+
 
 while True:
     var_result_list['VEE']=_vee_checker()
@@ -63,13 +68,12 @@ while True:
         var_current_price_vee.append(float(var_result_list['BTC']))
         counter = 1
     if time_H_M == '23:59' and counter == 0:
-        var_alarm_vee.remove(0)
-        var_alarm_btc.remove(0)
+        var_current_price_vee = _clear_0_digit(var_current_price_vee)
+        var_current_price_btc = _clear_0_digit(var_current_price_btc)
         temp_list = {'BTC':sum(var_current_price_btc),'VEE':sum(var_current_price_vee)}
         _write_to_server(day_date,temp_list,len(var_current_price_vee),len(var_current_price_btc),var_result_list)
         _clearing_current_session_data()
-        counter = 1
-    if time_H_M in ('00:00','01:03','01:25', '07:02', '09:26', '10:46', '12:02', '18:26', '20:26', '23:50'):
+    if time_H_M in ('01:03','00:01', '07:02', '09:26', '10:46', '12:02', '18:26', '20:26', '23:50'):
         counter = 0
 
 
