@@ -6,7 +6,7 @@ collecting data for prive of BTC and VEE,
 BTC with api and JSon
 VEE is scraping from sitecode.
 Everything is saved on redis server with Key(date) : Value pairs (where values is two Dict one For VEE and one for BTC.)
-Saving time is 23:59 just be fore day ends."""
+Saving time is 23:59 just before day ends."""
 
 
 #Front_end_dis_back_end_for_it
