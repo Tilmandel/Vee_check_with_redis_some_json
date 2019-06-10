@@ -25,16 +25,17 @@ def _take_data_from_server(server):
     var_DB_data = {}
     start_time_day = int(time.strftime('%d'))
     for i in range(start_time_day-3,start_time_day):
-        key = str(i)+ time.strftime('.%m.%Y')
+        if i <=9:
+            key = "0"+str(i)+ time.strftime('.%m.%Y')
         try:
             arch_data = server.hgetall(key)
             if arch_data == {}:
-                var_DB_data[key] = {'BTC': 0, 'VEE': 0}
+                var_DB_data[key] = {'BTC': 1, 'VEE': 1}
             else:
                 var_DB_data[key] = {'BTC':arch_data['BTC'],'VEE':arch_data['VEE']}
         except Exception:
             continue
-    return var_DB_data, sorted(var_DB_data)
+    return var_DB_data ,sorted(var_DB_data)
 def _replace(string):
     delete = str(string)
     delete = delete.replace(",", " ")
